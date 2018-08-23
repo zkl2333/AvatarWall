@@ -1,5 +1,5 @@
 // var wsUrl = 'ws://123.207.167.163:9010/ajaxchattest'
-var wsUrl = 'ws://192.168.31.92:8882/chat/zkl'
+var wsUrl = 'ws://192.168.31.92:8888/chat/zkl'
 
 var ws //websocket实例
 
