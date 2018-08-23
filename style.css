@@ -1,0 +1,42 @@
+html {
+    background: url('./img/bj.jpg')
+}
+
+body {
+    padding: 0;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.main {
+    width: 100%;
+    margin: 0 auto;
+}
+
+.tx {
+    position: relative;
+}
+
+.tx img {
+    width: 4vw;
+    display: inline-block;
+    transition: all 2s;
+}
+
+.imgAnimation {
+    animation-name: imgAnimation;
+    animation: imgAnimation 10s alternate;
+}
+
+@keyframes imgAnimation {
+    0% {
+        top: 1000px;
+        left: 50%;
+    }
+    50% {
+        top: 40vh;
+        left: 50%;
+        transform: scale(5);
+    }
+}
