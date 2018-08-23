@@ -70,6 +70,8 @@ function animationEnd() {
  * addImg(src, x, y, ani)
  * 返回值为创建的元素
  */
+var imgId
+
 function addImg(src, x, y) {
 	try {
 		if (src != undefined && x != undefined && y != undefined) {
@@ -81,7 +83,7 @@ function addImg(src, x, y) {
 				top: y * 3 + 'vw',
 				position: 'absolute',
 				width: '3vw'
-			}).addClass('animated ' + ani).appendTo('.tx').one(
+			}).addClass('animated imgAnimation').appendTo('.tx').one(
 				animationEnd(),
 				function () {
 					$(this).addClass('animated fast flash');
@@ -121,12 +123,43 @@ function initEventHandle() {
 		//心跳检测重置
 		heartCheck.reset().start();
 		console.log('连接成功')
+		// ws.send('getAll')
 	};
 	ws.onmessage = function (e) {
 		//如果获取到消息，心跳检测重置
 		//拿到任何消息都说明当前连接是正常的
 		heartCheck.reset().start()
-		console.log(e.data)
+		// console.log(e.data)
+		// console.log(JSON.parse(e.data).Item)
+		var res = JSON.parse(e.data).Item
+		// if (res != undefined) {
+		// 	for (var i in res) {
+		// 		console.log(res[i])
+		// 		// addImg(res[i].hear_img, 10, 10)
+		// 		var imgXYarr = roa(createArr(20, 20))
+		// 		addImg(res[i].hear_img, imgXYarr[i % imgXYarr.length].x, imgXYarr[i % imgXYarr.length].y)
+		// 		// addImg('./img/3.jpeg', 10, 10)
+		// 	}
+		// }
+		var timesRun = 0
+		// 产生数组并打乱
+		var imgXYarr = roa(createArr(20, 20))
+		// 测试图片
+		var img = res
+		// 创建定时器，重复执行timesRun次，延时s
+		var interval = setInterval(function () {
+			console.log("添加", timesRun, "个")
+			if (timesRun === res.length) {
+				// 清除定时器
+				clearInterval(interval)
+				console.log("结束")
+			}
+			var src = img[timesRun].hear_img
+			var ani = 'imgAnimation'
+			// 插入图片
+			addImg(src, imgXYarr[timesRun % imgXYarr.length].x, imgXYarr[timesRun % imgXYarr.length].y, ani)
+			timesRun += 1
+		}, 1000)
 	}
 }
 
@@ -198,7 +231,8 @@ function main() {
 	// 创建连接
 	createWebSocket(wsUrl)
 	// 获取头像地址
-
+	// if (lockReconnect)
+	// 	ws.send('getAll')
 	// 创建头像
 
 	// // 绘制坐标系
