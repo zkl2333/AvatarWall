@@ -242,6 +242,10 @@ function test(x, y, s) {
 }
 
 // test(10, 10, 100)
+function testWs(){
+	var str = '{"Item": [{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"}]}'
+	wall.showAllItems(JSON.parse(str))
+}
 
 function start() {
 	// 创建连接
@@ -250,5 +254,3 @@ function start() {
 }
 
 start()
-var str = '{"Item": [{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"}]}'
-wall.showAllItems(JSON.parse(str))
