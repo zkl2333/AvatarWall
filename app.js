@@ -95,15 +95,6 @@ var wall = {
 	showAllItems: function showAllItems(data) {
 		var self = this
 		var items = data.Item
-		// if (items != undefined) {
-		// 	for (var i in items) {
-		// 		console.log(items[i])
-		// 		// addImg(items[i].hear_img, 10, 10)
-		// 		var imgXYarr = roa(createArr(20, 20))
-		// 		addImg(items[i].hear_img, imgXYarr[i % imgXYarr.length].x, imgXYarr[i % imgXYarr.length].y)
-		// 		// addImg('./img/3.jpeg', 10, 10)
-		// 	}
-		// }
 		var timesRun = 0
 		// 产生数组并打乱
 		var imgXYarr = this.roa(this.createArr(20, 20))
@@ -111,8 +102,8 @@ var wall = {
 		var img = items
 		// 创建定时器，重复执行timesRun次，延时s
 		var interval = setInterval(function () {
-			console.log("添加", timesRun, "个")
-			if (timesRun === items.length) {
+			console.log("添加", timesRun + 1, "个")
+			if (timesRun + 1 === items.length) {
 				// 清除定时器
 				clearInterval(interval)
 				console.log("结束")
@@ -160,14 +151,16 @@ function initEventHandle() {
 		heartCheck.reset().start()
 		// console.log(e.data)
 		// 判断消息类型
-		if (e.data !== wsConf.HeartBeatStr){
+		if (e.data !== wsConf.HeartBeatStr) {
 			try {
-				var mag = JSON.parse(e.data)
-				if (typeof mag == 'object' && mag && wsConf.HeartBeatStr) {
-					onMessageCallback()
+				var msg = JSON.parse(e.data)
+				if (typeof msg == 'object' && msg) {
+					onMessageCallback(msg)
+				} else {
+					throw new Error()
 				}
 			} catch (e) {
-				console.log('无效的消息')
+				console.log('收到无效的消息,请返回json格式')
 			}
 		} else {
 			console.log('收到心跳')
@@ -177,11 +170,11 @@ function initEventHandle() {
 
 // 接收消息事件回调函数
 function onMessageCallback(data) {
-	console.log(data)
+	// console.log(data)
 	if (data.Item) {
-		wall.showAllItems(data.Item)
-	} else if(data){
-		console.log()
+		wall.showAllItems(data)
+	} else if (data) {
+		console.log('未处理的消息', data)
 	}
 }
 
@@ -253,15 +246,9 @@ function test(x, y, s) {
 function start() {
 	// 创建连接
 	createWebSocket(wsConf.wsUrl)
-	// 获取头像地址
-	// if (wsConf.lockReconnect)
-	// 	ws.send('getAll')
-	// 创建头像
-
-	// // 绘制坐标系
-	// var imgXYarr = roa(createArr(10, 10))
-	// // 插入头像
-	// addImg('./img/1.jpg', 1, 1).attr('id', 12);
+	
 }
 
 start()
+var str = '{"Item": [{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"}]}'
+wall.showAllItems(JSON.parse(str))
