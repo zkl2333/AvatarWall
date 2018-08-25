@@ -6,7 +6,7 @@ module.exports = {
         "jquery": true
     },
     "parserOptions": {
-        "ecmaVersion": 6
+        "ecmaVersion": 5
     },
     "rules": {
         "indent": [
