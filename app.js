@@ -119,24 +119,25 @@ function initEventHandle() {
 		console.log('连接错误')
 	}
 	ws.onopen = function () {
-		//心跳检测重置
+		// 心跳检测重置
 		heartCheck.reset().start()
 		console.log('连接成功')
 		// ws.send('getAll')
 	}
 	ws.onmessage = function (e) {
-		//如果获取到消息，心跳检测重置
-		//拿到任何消息都说明当前连接是正常的
+		// 如果获取到消息，心跳检测重置
+		// 拿到任何消息都说明当前连接是正常的
 		heartCheck.reset().start()
 		// console.log(e.data)
 		var mag = JSON.parse(e.data)
+		// 判断消息类型
 		if (mag.Item) {
-			showAllItem(mag.Item)
+			showAllItems(mag.Item)
 		}
 	}
 }
 
-function showAllItem (data){
+function showAllItems (data){
 	var items = data.Item
 	// if (items != undefined) {
 	// 	for (var i in items) {
