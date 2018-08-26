@@ -49,14 +49,14 @@ var myWebSocket = function (option) {
 	function reconnect(url) {
 		if (lockReconnect) return
 		lockReconnect = true
-		//没连接上会一直重连，设置延迟避免请求过多
+		// 没连接上会一直重连，设置延迟避免请求过多
 		setTimeout(function () {
 			createWebSocket(url)
 			lockReconnect = false
 		}, 2000)
 	}
 
-	//心跳检测
+	// 心跳检测
 	var heartCheck = {
 		timeout: option.timeout || 15000, //默认15秒
 		timeoutObj: null,
@@ -70,13 +70,13 @@ var myWebSocket = function (option) {
 		start: function () {
 			var self = this
 			this.timeoutObj = setTimeout(function () {
-				//这里发送一个心跳，后端收到后，返回一个心跳消息，
-				//onmessage拿到返回的心跳就说明连接正常
+				// 这里发送一个心跳，后端收到后，返回一个心跳消息，
+				// onmessage拿到返回的心跳就说明连接正常
 				ws.send(self.HeartBeatStr)
-				console.log('发送心跳')
-				self.serverTimeoutObj = setTimeout(function () { //如果超过一定时间还没重置，说明后端主动断开了
+				// console.log('发送心跳')
+				self.serverTimeoutObj = setTimeout(function () { // 如果超过一定时间还没重置，说明后端主动断开了
 					console.log('超时重连')
-					ws.close() //如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
+					ws.close() // 如果onclose会执行reconnect，我们执行ws.close()就行了.如果直接执行reconnect 会触发onclose导致重连两次
 				}, self.timeout)
 			}, this.timeout)
 		}
@@ -223,10 +223,6 @@ function test(x, y, s) {
 }
 
 // test(10, 10, 100)
-function testWs() {
-	var str = '{"Item": [{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"},{"name": "zkl","hear_img": "./img/1.jpg"}]}'
-	wall.showAllItems(JSON.parse(str))
-}
 
 function start() {
 	// 创建连接
@@ -235,7 +231,6 @@ function start() {
 		url: 'ws://123.207.167.163:9010/ajaxchattest',
 		timeout: 1000
 	})
-	console.log(myws)
 	// 监听接受消息事件
 	myws.addEventListener('message', onMessage)
 
@@ -250,7 +245,7 @@ function start() {
 	}
 
 	function onMessage(e) {
-		// // 判断消息类型
+		// 判断消息类型是否为json
 		if (e.data !== myws.HeartBeatStr) {
 			try {
 				var msg = JSON.parse(e.data)
