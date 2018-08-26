@@ -1,4 +1,19 @@
 {
   "name": "avatar-wall",
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "description": "头像上墙",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/zkl2333/AvatarWall.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/zkl2333/AvatarWall/issues"
+  },
+  "homepage": "https://github.com/zkl2333/AvatarWall#readme"
 }

@@ -1,0 +1,7 @@
+{
+    "files.autoSave": "onFocusChange",
+    "editor.minimap.enabled": false,
+    "git.enableSmartCommit": true,
+    "editor.fontSize": 16,
+    "workbench.colorTheme": "Dracula Soft",
+}
