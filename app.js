@@ -4,9 +4,14 @@ var myWebSocket = function (option) {
 	var lockReconnect = false //避免重复连接
 	this.HeartBeatStr = option.HeartBeatStr || 'HeartBeat'
 	var ws
+	var allListener = []
 	createWebSocket(wsUrl)
 	// 添加事件监听
 	this.addEventListener = function (event, callback) {
+		allListener.push({
+			event: event,
+			callback: callback
+		})
 		ws.addEventListener(event, callback)
 	}
 	// 发送消息
@@ -43,6 +48,9 @@ var myWebSocket = function (option) {
 			// 拿到任何消息都说明当前连接是正常的
 			heartCheck.reset().start()
 		}
+		allListener.forEach(function (listener) {
+			ws.addEventListener(listener.event, listener.callback)
+		})
 	}
 
 	// 重连
@@ -143,22 +151,34 @@ var wall = {
 	 * addImg(src, x, y, ani)
 	 * 返回值为创建的元素
 	 */
-	addImg: function addImg(src, x, y) {
+	addImg: function addImg(src, id, x, y) {
 		try {
 			if (src != undefined && x != undefined && y != undefined) {
-				var imgEl = $('<img>')
-				imgEl.attr({
-					src: src
-				}).css({
-					left: x * 3 + 'vw',
-					top: y * 3 + 'vw',
-					position: 'absolute',
-					width: '3vw'
-				}).addClass('animated imgAnimation').appendTo('.tx').one(
-					this.animationEnd(),
-					function () {
-						$(this).addClass('animated fast flash')
+				var imgEl
+				if ($('#' + id).length > 0) {
+					imgEl = $('#' + id).attr({
+						src: src
+					}).css({
+						left: x * 3 + 'vw',
+						top: y * 3 + 'vw',
+						position: 'absolute',
+						width: '3vw'
 					})
+				} else {
+					imgEl = $('<img>').attr({
+						id: id,
+						src: src
+					}).css({
+						left: x * 3 + 'vw',
+						top: y * 3 + 'vw',
+						position: 'absolute',
+						width: '3vw'
+					}).addClass('animated imgAnimation').appendTo('.tx').one(
+						this.animationEnd(),
+						function () {
+							$(this).addClass('animated fast flash')
+						})
+				}
 				return imgEl
 			} else {
 				throw new Error('缺少参数')
@@ -171,11 +191,9 @@ var wall = {
 		var self = this
 		var items = data.Item
 		var timesRun = 0
-		// 产生数组并打乱
-		var imgXYarr = this.roa(this.createArr(20, 20))
 		// 测试图片
 		var img = items
-		// 创建定时器，重复执行timesRun次，延时s
+		// 创建定时器，重复执行items.length次，延时s，遍历数组
 		var interval = setInterval(function () {
 			console.log("添加", timesRun + 1, "个")
 			if (timesRun + 1 === items.length) {
@@ -184,13 +202,15 @@ var wall = {
 				console.log("结束")
 			}
 			var src = img[timesRun].hear_img
+			var id = img[timesRun].id
 			// 插入图片
 			self.addImg(src,
+				id,
 				imgXYarr[timesRun % imgXYarr.length].x,
 				imgXYarr[timesRun % imgXYarr.length].y
 			)
 			timesRun += 1
-		}, 1000)
+		}, 200)
 	}
 }
 
@@ -223,25 +243,23 @@ function test(x, y, s) {
 }
 
 // test(10, 10, 100)
+var imgXYarr = wall.roa(wall.createArr(20, 20))
 
 function start() {
 	// 创建连接
 	var myws = new myWebSocket({
 		// url: 'ws://192.168.31.92:8888/chat/zkl',
-		url: 'ws://123.207.167.163:9010/ajaxchattest',
-		timeout: 1000
+		// url: 'ws://123.207.167.163:9010/ajaxchattest',
+		url: 'ws://127.0.0.1:8080',
+		timeout: 10000
 	})
 	// 监听接受消息事件
 	myws.addEventListener('message', onMessage)
+	myws.addEventListener('open', onOpen)
 
-	// 接收消息事件回调函数
-	function onMessageCallback(data) {
-		// console.log(data)
-		if (data.Item) {
-			wall.showAllItems(data)
-		} else if (data) {
-			console.log('未处理的消息', data)
-		}
+	function onOpen(e) {
+		myws.send('getAll')
+		console.log('123')
 	}
 
 	function onMessage(e) {
@@ -260,6 +278,18 @@ function start() {
 		} else {
 			console.log('收到心跳')
 		}
+	}
+}
+
+// 接收消息事件回调函数
+function onMessageCallback(data) {
+	// console.log(data)
+	if (data.Item) {
+		wall.showAllItems(data)
+	} else if (data.add) {
+		wall.addImg(data.add.hear_img, data.add.id, imgXYarr[data.add.id % imgXYarr.length].x, imgXYarr[data.add.id % imgXYarr.length].y)
+	} else {
+		console.log('未处理的消息', data)
 	}
 }
 
