@@ -1,3 +1,7 @@
+var maxid = 0
+var X = parseInt(document.body.clientWidth / 50)
+var Y = parseInt(document.body.clientHeight / 50)
+
 var myWebSocket = function (option) {
 	// var wsUrl = url || 'ws://123.207.167.163:9010/ajaxchattest'
 	var wsUrl = option.url || 'ws://127.0.0.1'
@@ -14,10 +18,17 @@ var myWebSocket = function (option) {
 		})
 		ws.addEventListener(event, callback)
 	}
-	// 发送消息
-	this.send = function (data) {
-		ws.send(data)
+
+	// 关闭连接
+	this.close = function (arg) {
+		ws.close()
 	}
+
+	// 发送消息
+	this.send = function (arg) {
+		ws.send(arg)
+	}
+
 	// 创建连接
 	function createWebSocket(url) {
 		try {
@@ -91,11 +102,21 @@ var myWebSocket = function (option) {
 	}
 }
 
+// 创建连接
+var myws = new myWebSocket({
+	// url: 'ws://192.168.31.92:8888/chat/zkl',
+	// url: 'ws://123.207.167.163:9010/ajaxchattest',
+	url: 'ws://127.0.0.1:8080',
+	timeout: 1000
+})
+
 var wall = {
-	/* 
+	/** 
 	 * 建立一个直角坐标系
+	 * @param x
+	 * @param y
+	 * @return {Array} 返回一个顺序的坐标数组
 	 * createArr(几行, 几列)
-	 * 返回一个顺序的坐标数组
 	 */
 	createArr: function createArr(x, y) {
 		var arr = new Array()
@@ -146,12 +167,19 @@ var wall = {
 			}
 		}
 	},
-	/* 
-	 * 向页面插入头像
-	 * addImg(src, x, y, ani)
-	 * 返回值为创建的元素
+
+	/** 
+	 * 向页面插入头像 
+	 * @param src  {string} 头像的路径
+	 * @param id {number} 用户的id
+	 * @param x {number} 在x轴的位置
+	 * @param y {number} 在y轴的位置
+	 * @return {Element} 产生的元素
 	 */
 	addImg: function addImg(src, id, x, y) {
+		if (id > maxid) {
+			maxid = id
+		}
 		try {
 			if (src != undefined && x != undefined && y != undefined) {
 				var imgEl
@@ -159,20 +187,20 @@ var wall = {
 					imgEl = $('#' + id).attr({
 						src: src
 					}).css({
-						left: x * 3 + 'vw',
-						top: y * 3 + 'vw',
+						left: x * 50 + 'px',
+						top: y * 50 + 'px',
 						position: 'absolute',
-						width: '3vw'
+						width: '50px'
 					})
 				} else {
 					imgEl = $('<img>').attr({
 						id: id,
 						src: src
 					}).css({
-						left: x * 3 + 'vw',
-						top: y * 3 + 'vw',
+						left: x * 50 + 'px',
+						top: y * 50 + 'px',
 						position: 'absolute',
-						width: '3vw'
+						width: '50px'
 					}).addClass('animated imgAnimation').appendTo('.tx').one(
 						this.animationEnd(),
 						function () {
@@ -214,18 +242,19 @@ var wall = {
 	}
 }
 
+var imgXYarr = wall.roa(wall.createArr(X, Y))
+
 // 测试
-function test(x, y, s) {
-	if (x != undefined && y != undefined && s != undefined) {
+function test(n, s) {
+	if (n != undefined && s != undefined) {
 		var timesRun = 0
 		// 产生数组并打乱
-		var imgXYarr = wall.roa(wall.createArr(x, y))
 		// 测试图片
 		var img = ['./img/1.jpg', './img/2.jpeg', './img/3.jpeg', './img/4.jpg', './img/5.jpg', './img/6.jpg', './img/7.jpg', './img/8.png']
 		// 创建定时器，重复执行timesRun次，延时s
 		var interval = setInterval(function () {
 			console.log("添加", timesRun, "个")
-			if (timesRun === x * y) {
+			if (timesRun === n) {
 				// 清除定时器
 				clearInterval(interval)
 				console.log("结束")
@@ -233,7 +262,7 @@ function test(x, y, s) {
 			var src = img[Math.floor(Math.random() * img.length) % img.length]
 			var ani = 'imgAnimation'
 			// 插入图片
-			wall.addImg(src, imgXYarr[timesRun % imgXYarr.length].x, imgXYarr[timesRun % imgXYarr.length].y, ani)
+			wall.addImg(src, timesRun, imgXYarr[timesRun % imgXYarr.length].x, imgXYarr[timesRun % imgXYarr.length].y)
 			timesRun += 1
 		}, s)
 	} else {
@@ -242,17 +271,8 @@ function test(x, y, s) {
 	return this
 }
 
-// test(10, 10, 100)
-var imgXYarr = wall.roa(wall.createArr(20, 20))
-
 function start() {
-	// 创建连接
-	var myws = new myWebSocket({
-		// url: 'ws://192.168.31.92:8888/chat/zkl',
-		// url: 'ws://123.207.167.163:9010/ajaxchattest',
-		url: 'ws://127.0.0.1:8080',
-		timeout: 10000
-	})
+
 	// 监听接受消息事件
 	myws.addEventListener('message', onMessage)
 	myws.addEventListener('open', onOpen)
@@ -284,13 +304,26 @@ function start() {
 // 接收消息事件回调函数
 function onMessageCallback(data) {
 	// console.log(data)
-	if (data.Item) {
-		wall.showAllItems(data)
-	} else if (data.add) {
-		wall.addImg(data.add.hear_img, data.add.id, imgXYarr[data.add.id % imgXYarr.length].x, imgXYarr[data.add.id % imgXYarr.length].y)
-	} else {
-		console.log('未处理的消息', data)
+	try {
+		if (data.Item) {
+			wall.showAllItems(data)
+		} else if (data.add) {
+			console.log(data.add.hear_img,
+				data.add.id,
+				imgXYarr[data.add.id % imgXYarr.length].x,
+				imgXYarr[data.add.id % imgXYarr.length].y)
+			wall.addImg(
+				data.add.hear_img,
+				data.add.id,
+				imgXYarr[data.add.id % imgXYarr.length].x,
+				imgXYarr[data.add.id % imgXYarr.length].y)
+		} else {
+			console.log('未处理的消息', data)
+		}
+	} catch (e) {
+		console.log('处理的消息失败')
 	}
+
 }
 
-start()
+// start()
