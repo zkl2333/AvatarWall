@@ -4,4 +4,9 @@
     "git.enableSmartCommit": true,
     "editor.fontSize": 16,
     "workbench.colorTheme": "Dracula Soft",
+    "eslint.autoFixOnSave": true,
+    "prettier.eslintIntegration": true,
+    "prettier.semi": false,
+    "prettier.singleQuote": true,
+    "javascript.format.insertSpaceBeforeFunctionParenthesis": true,
 }
