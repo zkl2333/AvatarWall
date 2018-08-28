@@ -1,5 +1,3 @@
-var maxid = window.maxid
-var wall = window.wall
 /**
  * 空闲控制 返回函数连续调用时，空闲时间必须大于或等于 idle，action 才会执行
  * @param idle   {number}    空闲时间，单位毫秒
@@ -19,7 +17,7 @@ var debounce = function (idle, action) {
 }
 
 var resizeEvt = 'orientationchange' in window ? 'orientationchange' : 'resize'
-window.addEventListener(resizeEvt, debounce(1000, resize))
+window.addEventListener(resizeEvt, debounce(500, resize))
 /**
  * 当浏览器大小改变时
  */

@@ -1,5 +1,5 @@
 html {
-    background: url('./img/bj.jpg')
+    background: url('../img/bj.jpg')
 }
 
 body {
@@ -19,14 +19,13 @@ body {
 }
 
 .tx img {
-    width: 4vw;
     display: inline-block;
-    transition: all 2s;
+    transition: all 1s;
+    border-radius: 10px;
 }
 
 .imgAnimation {
-    animation-name: imgAnimation;
-    animation: imgAnimation 10s alternate;
+    animation: imgAnimation 3s normal !important;
 }
 
 @keyframes imgAnimation {
@@ -37,6 +36,6 @@ body {
     50% {
         top: 40vh;
         left: 50%;
-        transform: scale(5);
+        transform: scale(8);
     }
 }
