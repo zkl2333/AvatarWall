@@ -8,6 +8,12 @@ module.exports = {
     "parserOptions": {
         "ecmaVersion": 5
     },
+    "globals": {
+        "myWebSocket": false,
+        "wall": false,
+        "maxid": true,
+        "imgXYarr": true
+    },
     "rules": {
         "indent": [
             "error",
@@ -15,9 +21,9 @@ module.exports = {
         ],
         "semi": ["warn", "never"],
         "quotes": "off",
-        "no-console":"off",
-        "no-unused-vars":"off",
-        "no-unreachable":"off",
-        "no-redeclare":"warn"
+        "no-console": "off",
+        "no-unused-vars": "off",
+        "no-unreachable": "off",
+        "no-redeclare": "warn"
     }
 };
